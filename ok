@@ -1,4 +1,4 @@
--- SimpleUI v2 — Modern Roblox UI Library
+-- SimpleUI v2 — Modern Roblox UI Library test
 
 local SimpleUI = {}
 SimpleUI.__index = SimpleUI
@@ -281,13 +281,16 @@ function SimpleUI:AddTab(name, icon)
     btn.Parent            = self._sidebar
     corner(btn, 7)
 
-    -- FIX: Accent bar animates from centre outward
-    local barContainer = mkFrame(btn, UDim2.new(0,3,1,0), UDim2.new(0,0,0,0), Color3.new(0,0,0), 1)
+    -- FIXED: Accent bar container with proper symmetric anchoring
+    local barContainer = mkFrame(btn, UDim2.new(0,3,0,0), UDim2.new(0,0,0,0), Color3.new(0,0,0), 1)
     barContainer.ClipsDescendants = true
+    barContainer.AnchorPoint = Vector2.new(0, 0.5)
+    barContainer.Position = UDim2.new(0, 0, 0.5, 0)
     corner(barContainer, 3)
 
-    local bar = mkFrame(barContainer, UDim2.new(1,0,0,0), UDim2.new(0,0,0.5,0), T.ACCENT)
+    local bar = mkFrame(barContainer, UDim2.new(1,0,0,0), UDim2.new(0,0,0,0), T.ACCENT)
     bar.AnchorPoint = Vector2.new(0, 0.5)
+    bar.Position = UDim2.new(0, 0, 0.5, 0)
     corner(bar, 3)
 
     local iconLbl = Instance.new("TextLabel")
@@ -320,15 +323,14 @@ function SimpleUI:AddTab(name, icon)
 
     local tabObj = { _container = container }
 
-    -- FIX: Bar grows from centre outward symmetrically
+    -- FIXED: Bar grows from centre outward symmetrically (both up and down equally)
     local function animateBarIn()
-        bar.Size     = UDim2.new(1,0,0,0)
-        bar.Position = UDim2.new(0,0,0.5,0)
-        tw(bar, {Size = UDim2.new(1,0,1,0), Position = UDim2.new(0,0,0,0)}, 0.3, Enum.EasingStyle.Back)
+        barContainer.Size = UDim2.new(0, 3, 0, 0)
+        tw(barContainer, {Size = UDim2.new(0, 3, 1, 0)}, 0.3, Enum.EasingStyle.Back)
     end
 
     local function animateBarOut()
-        tw(bar, {Size = UDim2.new(1,0,0,0), Position = UDim2.new(0,0,0.5,0)}, 0.2, Enum.EasingStyle.Quint)
+        tw(barContainer, {Size = UDim2.new(0, 3, 0, 0)}, 0.2, Enum.EasingStyle.Quint)
     end
 
     local function activate()
